@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
     async redirects() {
         return [
           {
-            source: '/devocionais/link',
+            source: '/devocionais/links',
             destination: '/links',
             permanent: true,
           },
