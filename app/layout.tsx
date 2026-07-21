@@ -82,7 +82,18 @@ export default function RootLayout({
         </main>
 
         <footer className="border-t border-ring/20">
-          <div className="max-w-8xl mx-auto p-6 flex flex-col md:flex-row md:justify-between items-center gap-2">
+          <ul className="max-w-8xl mx-auto p-6 flex flex-row flex-wrap md:justify-end items-center gap-4 border-b">
+            <li>
+              <a className="text-sm text-muted-foreground" href="/sobre" title="Sobre">Sobre</a>
+            </li>
+            <li>
+              <a className="text-sm text-muted-foreground" href="/termos-uso" title="Termos de Uso">Termos de Uso</a>
+            </li>
+            <li>
+              <a className="text-sm text-muted-foreground" href="/politica-de-privacidade" title="Política de Privacidade">Política de Privacidade</a>
+            </li>
+          </ul>
+          <div className="max-w-8xl mx-auto p-6 flex flex-col md:flex-row md:justify-between items-start gap-2">
             <p className="text-sm text-muted-foreground">
               <span>{new Date().getFullYear()}</span> <span>&copy; Novas de Cada Manhã</span>
             </p>
