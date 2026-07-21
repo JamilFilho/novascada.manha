@@ -40,8 +40,33 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
   
   const { posts, totalPages } = await getPaginatedPosts(currentPage, postsPerPage);
 
+  // Construção do objeto JSON-LD para página de listagem
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Todos os Devocionais",
+    description: "Edifique sua fé com nossos devocionais diários. Leia edições anteriores e medite na Palavra de Deus.",
+    url: `/devocionais${currentPage > 1 ? `?page=${currentPage}` : ""}`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: posts.map((post, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `/devocionais/${post.slug}`,
+        name: post.title,
+        description: post.description,
+      })),
+    },
+  };
+
   return (
     <div className="space-y-12">
+      {/* Injeção de dados estruturados para listagem */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Todos os devocionais</h1>
         <p className="text-sm text-muted-foreground">Edifique sua fé com nossos devocionais diários</p>
