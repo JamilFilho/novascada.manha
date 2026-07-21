@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { getPaginatedPosts } from "@/lib/content";
 import {
@@ -8,6 +9,25 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+
+export const metadata: Metadata = {
+  title: "Todos os Devocionais",
+  description: "Edifique sua fé com nossos devocionais diários. Leia edições anteriores e medite na Palavra de Deus.",
+  alternates: {
+    canonical: "/devocionais",
+  },
+  openGraph: {
+    title: "Todos os Devocionais",
+    description: "Edifique sua fé com nossos devocionais diários. Leia edições anteriores e medite na Palavra de Deus.",
+    url: "/devocionais",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Todos os Devocionais",
+    description: "Edifique sua fé com nossos devocionais diários. Leia edições anteriores e medite na Palavra de Deus.",
+  },
+};
 
 interface EdicoesPageProps {
   searchParams: Promise<{ page?: string }>;

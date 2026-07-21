@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getPostBySlug, getAdjacentPosts } from "@/lib/content";
@@ -5,9 +6,41 @@ import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
 
-
 interface PostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return {};
+  }
+
+  const title = post.title;
+  const description = post.description;
+  const pageUrl = `/devocionais/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: pageUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      type: "article",
+      authors: post.author ? [post.author] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
 }
 
 export default async function PostPage({ params }: PostPageProps) {
