@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto, Merriweather } from "next/font/google"
 import Link from "next/link";
+import { Geist_Mono, Roboto, Merriweather } from "next/font/google";
 import "./globals.css"
 import { cn } from "@/lib/utils";
+import { Providers } from "@/components/providers";
 
 const merriweatherHeading = Merriweather({subsets:['latin'],variable:'--font-heading'});
 const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
@@ -50,7 +51,6 @@ export const metadata: Metadata = {
   },
 };
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -75,15 +75,17 @@ export default function RootLayout({
         </header>
 
         <main className="flex-1 max-w-2xl mx-auto px-8 md:px-0 pt-32 pb-20 w-full">
-          {children}
+          <Providers>
+            {children}
+          </Providers>
         </main>
 
         <footer className="border-t border-ring/20">
-          <div className="max-w-8xl mx-auto px-6 py-4 flex flex-col md:flex-row md:justify-between items-center gap-2">
-            <p>
+          <div className="max-w-8xl mx-auto p-6 flex flex-col md:flex-row md:justify-between items-center gap-2">
+            <p className="text-sm text-muted-foreground">
               <span>{new Date().getFullYear()}</span> <span>&copy; Novas de Cada Manhã</span>
             </p>
-            <p>Um site do Projeto Euaggelion</p>
+            <p className="text-sm text-muted-foreground">Um site do <a href="https://euaggelion.com.br" target="_blanck" title="Projeto Euaggelion" className="text-primary">Projeto Euaggelion</a></p>
           </div>
         </footer>
       </body>
