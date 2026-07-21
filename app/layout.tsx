@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next"
 import { Geist_Mono, Roboto, Merriweather } from "next/font/google";
 import "./globals.css"
 import { cn } from "@/lib/utils";
@@ -88,6 +89,7 @@ export default function RootLayout({
             <p className="text-sm text-muted-foreground">Um site do <a href="https://euaggelion.com.br" target="_blanck" title="Projeto Euaggelion" className="text-primary">Projeto Euaggelion</a></p>
           </div>
         </footer>
+        <Analytics/>
       </body>
     </html>
   )
