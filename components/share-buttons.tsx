@@ -14,7 +14,7 @@ export default function ShareButtons({ title, slug, description }: ButtonProps) 
     const [copied, setCopied] = useState(false);
     
     const baseUrl = "https://novasdecadamanha.com.br"; 
-    const shareUrl = `${baseUrl}/${slug}`;
+    const shareUrl = `${baseUrl}/devocionais/${slug}`;
     
     // CORREÇÃO AQUI: Ajustado para o padrão AAAA-MM-DD e reorganizado para DDMMAAAA
     const normalizeSubstackSlug = (s: string) => {
