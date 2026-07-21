@@ -14,7 +14,27 @@ const nextConfig: NextConfig = {
             permanent: true,
           },
           {
+            source: '/devocional-para-whatsapp',
+            destination: 'https://whatsapp.com/channel/0029Vb7awlL8aKvAzcgyrd3c',
+            permanent: true,
+          },
+          {
+            source: '/devocional-whatsapp',
+            destination: 'https://whatsapp.com/channel/0029Vb7awlL8aKvAzcgyrd3c',
+            permanent: true,
+          },
+          {
             source: '/devocional-no-telegram',
+            destination: 'https://t.me/novasdecadamanha_devocional',
+            permanent: true,
+          },
+          {
+            source: '/devocional-telegram',
+            destination: 'https://t.me/novasdecadamanha_devocional',
+            permanent: true,
+          },
+          {
+            source: '/devocional-para-telegram',
             destination: 'https://t.me/novasdecadamanha_devocional',
             permanent: true,
           },
