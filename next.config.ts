@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
     async redirects() {
         return [
           {
+            source: '/devocionais/link',
+            destination: '/links',
+            permanent: true,
+          },
+          {
             source: '/devocional-no-whatsapp',
             destination: 'https://whatsapp.com/channel/0029Vb7awlL8aKvAzcgyrd3c',
             permanent: true,
