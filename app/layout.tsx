@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/next"
 import { Geist_Mono, Roboto, Merriweather } from "next/font/google";
 import "./globals.css"
 import { cn } from "@/lib/utils";
-import { Providers } from "@/components/providers";
 
 const merriweatherHeading = Merriweather({subsets:['latin'],variable:'--font-heading'});
 const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
@@ -75,10 +74,7 @@ export default function RootLayout({
           </div>
         </header>
 
-        <main className="flex-1 max-w-2xl mx-auto px-8 md:px-0 pt-32 pb-20 w-full">
-          <Providers>
-            {children}
-          </Providers>
+        <main className="flex-1 max-w-2xl mx-auto px-8 md:px-0 pt-32 pb-20 w-full">{children}
         </main>
 
         <footer className="border-t border-ring/20">

@@ -1,6 +1,7 @@
 "use client";
 
 import { ClapButton } from "@lyket/react";
+import { Providers } from "@/components/providers";
 
 interface ApplauseButtonProps {
   slug: string;
@@ -17,9 +18,11 @@ export default function ApplauseButton({ slug }: ApplauseButtonProps) {
     .replace(/[^a-z0-9-]/g, "");
 
   return (
-    <ClapButton
-      namespace="devocionais"
-      id={sanitizedId}
-    />
+    <Providers>
+      <ClapButton
+        namespace="devocionais"
+        id={sanitizedId}
+      />
+    </Providers>
   );
 }
