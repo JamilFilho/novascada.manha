@@ -19,6 +19,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface MdxRendererProps {
   content: string;
@@ -89,7 +90,16 @@ const components = {
       </Link>
     </div>
   ),
-};
+  Button: ({ link, text }: { 
+    text: string;
+    link: string; 
+  }) => (
+    <Button className="w-full my-6 text-sm md:text-base py-4 md:py-6">
+      <Link href={link} title={text}>
+        {text}
+      </Link>
+    </Button>)
+}
 
 export function MdxRenderer({ content }: MdxRendererProps) {
   return (
