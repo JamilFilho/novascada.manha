@@ -9,10 +9,9 @@ export default function robots(): MetadataRoute.Robots {
         // Regra geral para todos os buscadores
         userAgent: '*',
         allow: '/',
-        disallow: '/private/',
+        disallow: ['/private/', '/api/'],
       },
       {
-        // Crawlers e agentes de IA (OpenAI, Anthropic, Google, Perplexity, Apple, Cohere, etc.)
         userAgent: [
           'GPTBot',
           'ChatGPT-User',
@@ -26,7 +25,7 @@ export default function robots(): MetadataRoute.Robots {
           'CCBot',
         ],
         allow: ['/', '/llms.txt'],
-        disallow: '/private/',
+        disallow: ['/private/', '/api/'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
