@@ -11,6 +11,7 @@ export interface Post {
   slug: string;
   title: string;
   date: string;
+  substack: string;
   content: string;
   [key: string]: any;
 }
@@ -19,6 +20,7 @@ export interface BlogPost {
   slug: string;
   title: string;
   date: string;
+  substack: string;
   content: string;
   [key: string]: any;
 }
@@ -26,6 +28,7 @@ export interface BlogPost {
 export interface PageContent {
   slug: string;
   title: string;
+  substack: string;
   content: string;
   [key: string]: any;
 }
@@ -53,6 +56,7 @@ export async function getAllPosts(): Promise<Post[]> {
         slug: file.replace(/\.mdx?$/, ""),
         title: data.title || "Edição sem título",
         date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+        substack: data.substack || "",
         content,
         ...data,
       };
@@ -87,6 +91,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       slug,
       title: data.title || "Edição sem título",
       date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+      substack: data.substack || "",
       content,
       ...data,
     };
@@ -147,6 +152,7 @@ export async function getAllBlogPosts(): Promise<BlogPost[]> {
         slug: file.replace(/\.mdx?$/, ""),
         title: data.title || "Artigo sem título",
         date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+        substack: data.substack || "",
         content,
         ...data,
       };
@@ -177,6 +183,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
       slug,
       title: data.title || "Artigo sem título",
       date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
+      substack: data.substack || "",
       content,
       ...data,
     };
@@ -232,6 +239,7 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
     return {
       slug,
       title: data.title || "",
+      substack: data.substack || "",
       content,
       ...data,
     };
