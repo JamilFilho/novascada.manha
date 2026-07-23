@@ -81,6 +81,7 @@ export default async function HomePage() {
           title={featuredPost.title}
           description={featuredPost.description}
           slug={featuredPost.slug}
+          substackUrl={featuredPost.substack}
         />
       </article>
 

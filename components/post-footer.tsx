@@ -13,9 +13,10 @@ interface PostFooterProps {
   title: string;
   description: string;
   slug: string;
+  substackUrl: string;
 }
 
-export default function PostFooter({ title, slug, description }: PostFooterProps) {
+export default function PostFooter({ title, slug, description, substackUrl }: PostFooterProps) {
   return (
     <footer className="w-full flex flex-row justify-between mt-8 border-t py-2">
       <ApplauseButton slug={slug} />
@@ -23,6 +24,7 @@ export default function PostFooter({ title, slug, description }: PostFooterProps
         title={title}
         description={description}
         slug={slug}
+        substack={substackUrl}
       />
     </footer>
   );
