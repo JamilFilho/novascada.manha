@@ -3,6 +3,7 @@ import { getLatestPosts } from "@/lib/content";
 import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
+import { Badge } from "@/components/ui/badge";
 
 export default async function HomePage() {
   const posts = await getLatestPosts(3);
@@ -54,11 +55,9 @@ export default async function HomePage() {
 
       <article className="prose max-w-none">
         <header className="mb-8">
-          <time className="text-sm text-muted-foreground">
-            {new Date(`${featuredPost.date.split("T")[0]}T12:00:00`).toLocaleDateString("pt-BR", { 
-              dateStyle: "long" 
-            })}
-          </time>
+          <Link href={`/series/${featuredPost.section.slug}`} title={`Série ${featuredPost.section.title}`}>
+            <Badge className="mb-4" variant="default">{featuredPost.section.title}</Badge>
+          </Link>
           <h1 className="text-3xl font-bold tracking-tight mt-2 mb-4">{featuredPost.title}</h1>
           <h2 className="text-lg text-muted-foreground mb-4">
             {featuredPost.description}

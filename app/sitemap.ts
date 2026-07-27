@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/content";
+import { getAllPosts, getAllSeries } from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://novasdecadamanha.com.br";
@@ -8,6 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     "",
     "/devocionais",
+    "/series",
     "/links",
     "/sobre",
     "/politica-de-privacidade",
@@ -27,5 +28,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...routes, ...postRoutes];
+  // 3. Páginas dinâmicas das séries
+  const series = await getAllSeries();
+  const seriesRoutes = series.map((s) => ({
+    url: `${baseUrl}/series/${s.slug}`,
+    lastModified: new Date().toISOString().split("T")[0],
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...routes, ...postRoutes, ...seriesRoutes];
 }

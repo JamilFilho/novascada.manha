@@ -7,6 +7,13 @@ const DEVOTIONAL_PATH = path.join(process.cwd(), "content/devocionais");
 const BLOG_PATH = path.join(process.cwd(), "content/blog");
 const PAGES_PATH = path.join(process.cwd(), "content/pages");
 
+export interface PostSection {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+}
+
 export interface Post {
   slug: string;
   title: string;
@@ -92,6 +99,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       title: data.title || "Edição sem título",
       date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
       substack: data.substack || "",
+      section: data.section as PostSection | undefined,
       content,
       ...data,
     };
@@ -246,4 +254,80 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   } catch {
     return null;
   }
+}
+
+// ----------------------------------------------------------------
+// Funções Auxiliares para Séries (agrupadas pelo frontmatter "section")
+// ----------------------------------------------------------------
+
+export interface SeriesInfo {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  postCount: number;
+}
+
+// Retorna metadados de todas as séries encontradas nos devocionais
+export async function getAllSeries(): Promise<SeriesInfo[]> {
+  const allPosts = await getAllPosts();
+  const seriesMap = new Map<string, SeriesInfo>();
+
+  for (const post of allPosts) {
+    const section = post.section;
+    if (!section?.slug) continue;
+
+    const existing = seriesMap.get(section.slug);
+    if (existing) {
+      existing.postCount += 1;
+    } else {
+      seriesMap.set(section.slug, {
+        id: section.id,
+        title: section.title,
+        slug: section.slug,
+        description: section.description,
+        postCount: 1,
+      });
+    }
+  }
+
+  return Array.from(seriesMap.values());
+}
+
+// Busca os metadados de uma série específica pelo slug
+export async function getSeriesBySlug(seriesSlug: string): Promise<SeriesInfo | null> {
+  const allSeries = await getAllSeries();
+  return allSeries.find((s) => s.slug === seriesSlug) || null;
+}
+
+// Retorna todos os devocionais de uma série, ordenados por data (mais recente primeiro)
+export async function getPostsBySeries(seriesSlug: string): Promise<Post[]> {
+  const allPosts = await getAllPosts();
+  return allPosts.filter((post) => post.section?.slug === seriesSlug);
+}
+
+// Paginação dos devocionais de uma série (/series/[serie])
+export async function getPaginatedPostsBySeries(seriesSlug: string, page: number, limit: number) {
+  const seriesPosts = await getPostsBySeries(seriesSlug);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    posts: seriesPosts.slice(startIndex, endIndex),
+    totalPages: Math.ceil(seriesPosts.length / limit),
+    total: seriesPosts.length,
+  };
+}
+
+// Paginação do índice de séries (/series)
+export async function getPaginatedSeries(page: number, limit: number) {
+  const allSeries = await getAllSeries();
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    series: allSeries.slice(startIndex, endIndex),
+    totalPages: Math.ceil(allSeries.length / limit),
+    total: allSeries.length,
+  };
 }

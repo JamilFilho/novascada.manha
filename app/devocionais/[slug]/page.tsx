@@ -5,6 +5,7 @@ import { getPostBySlug, getAdjacentPosts } from "@/lib/content";
 import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
+import { Badge } from "@/components/ui/badge"
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       url: pageUrl,
       type: "article",
       authors: post.author ? [post.author] : undefined,
+      section: post.section?.title,
     },
     twitter: {
       card: "summary_large_image",
@@ -75,6 +77,14 @@ export default async function PostPage({ params }: PostPageProps) {
       "@type": "WebPage",
       "@id": `/devocionais/${slug}`,
     },
+    ...(post.section && {
+      articleSection: post.section.title,
+      about: {
+        "@type": "Thing",
+        name: post.section.title,
+        url: `/series/${post.section.slug}`,
+      },
+    }),
     ...(post.image && { image: post.image }),
   };
 
@@ -87,6 +97,9 @@ export default async function PostPage({ params }: PostPageProps) {
 
       <article className="relative prose max-w-none">
         <header className="mb-20">
+          <Link href={`/series/${post.section.slug}`} title={`Série ${post.section.title}`}>
+            <Badge className="mb-4" variant="default">{post.section.title}</Badge>
+          </Link>
           <h1 className="text-3xl font-bold tracking-tight mt-2 mb-2">{post.title}</h1>
           <h2 className="text-lg text-muted-foreground mb-4">{post.description}</h2>
 

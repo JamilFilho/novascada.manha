@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
-import { getAllPosts } from "@/lib/content";
+import { getAllPosts, getAllSeries } from "@/lib/content";
 
 export async function GET() {
   const baseUrl = "https://novasdecadamanha.com.br";
   const posts = await getAllPosts();
+  const series = await getAllSeries();
 
   // Constrói o índice de todas as edições em formato Markdown
   const postsIndex = posts
-    .map((post) => `- [${post.title}](${baseUrl}/devocionais/${post.slug}): Devocional publicado em ${new Date(`${post.date.split("T")[0]}T12:00:00`).toLocaleDateString("pt-BR", { dateStyle: "short" })}. Verísulo base: ${post.description}`)
+    .map((post) => {
+      const seriesInfo = post.section ? ` Série: ${post.section.title}.` : "";
+      return `- [${post.title}](${baseUrl}/devocionais/${post.slug}): Devocional publicado em ${new Date(`${post.date.split("T")[0]}T12:00:00`).toLocaleDateString("pt-BR", { dateStyle: "short" })}.${seriesInfo} Verísulo base: ${post.description}`;
+    })
+    .join("\n");
+
+  // Constrói o índice de todas as séries em formato Markdown
+  const seriesIndex = series
+    .map((s) => `- [${s.title}](${baseUrl}/series/${s.slug}): ${s.description || "Série de devocionais temática."} (${s.postCount} edições)`)
     .join("\n");
 
   const txtContent = `# Novas de Cada Manhã
@@ -17,13 +26,18 @@ export async function GET() {
 ## Informações Gerais
 - **Website:** ${baseUrl}
 - **Propósito:** Compartilhar mensagens de fé, esperança e edificação espiritual baseadas nas Escrituras Sagradas.
-- **Estrutura:** Reflexões bíblicas publicadas diariamente.
+- **Estrutura:** Reflexões bíblicas publicadas diariamente, organizadas em séries temáticas.
 
 ## Rotas Principais
 - [/](${baseUrl}): Página inicial com a edição mais recente (devocional do dia) e formulário de inscrição.
 - [/devocionais](${baseUrl}/devocionais): Histórico completo e acervo de todos os devocionais já publicados com paginação.
+- [/series](${baseUrl}/series): Índice de todas as séries temáticas de devocionais.
 - [/links](${baseUrl}/links): Central de links úteis, redes sociais e canais oficiais.
 - [/sobre](${baseUrl}/sobre): O propósito da newsletter, manifesto e informações sobre o projeto.
+
+## Séries Temáticas
+
+${seriesIndex}
 
 ## Acervo de Devocionais
 
