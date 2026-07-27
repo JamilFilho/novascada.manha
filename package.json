@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/build-search-index.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -19,6 +20,9 @@
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "fuse.js": "^7.5.0",
+    "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
     "next": "16.2.6",
     "next-mdx-remote": "^6.0.0",
