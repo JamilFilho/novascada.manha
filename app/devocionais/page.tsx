@@ -1,3 +1,5 @@
+// /devocionais/[slug]/page.tsx
+
 import { Metadata } from "next";
 import Link from "next/link";
 import { getPaginatedPosts } from "@/lib/content";

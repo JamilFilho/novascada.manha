@@ -40,7 +40,6 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   
   const { posts, totalPages } = await getPaginatedBlogPosts(currentPage, postsPerPage);
 
-  // Objeto JSON-LD estruturado para a listagem do blog
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
