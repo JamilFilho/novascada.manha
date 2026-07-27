@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Analytics } from "@vercel/analytics/next"
 import { Geist_Mono, Roboto, Merriweather } from "next/font/google";
 import "./globals.css"
 import { cn } from "@/lib/utils";
+import Logo from "@/components/logo";
 
 const merriweatherHeading = Merriweather({subsets:['latin'],variable:'--font-heading'});
 const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
@@ -65,8 +67,9 @@ export default function RootLayout({
       <body className="bg-background text-foreground min-h-screen flex flex-col">
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none bg-white/90 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none border-b border-ring/20 md:border-none">
           <div className="max-w-8xl mx-auto px-6 py-4 md:py-8 flex justify-between items-center">
-            <Link href="/" className="font-bold text-lg tracking-tight pointer-events-auto hover:opacity-80 transition-opacity">
-            <span className="hidden md:inline">Novas de</span> <span>Cada Manhã</span>
+            <Link href="/" className="flex flex-row items-center gap-1 lowercase font-bold text-lg tracking-tight pointer-events-auto hover:opacity-80 transition-opacity">
+              <Logo colorLogo="text-primary" size={32} />
+              <span className="hidden md:inline">Novas de</span> <span>Cada Manhã</span>
             </Link>
             <Link href="/links" className="text-sm font-medium pointer-events-auto hover:underline underline-offset-4">
               /links
