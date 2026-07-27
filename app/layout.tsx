@@ -78,15 +78,32 @@ export default function RootLayout({
         </main>
 
         <footer className="border-t border-ring/20">
-          <ul className="max-w-8xl mx-auto p-6 flex flex-row flex-wrap md:justify-end items-center gap-4 border-b">
+          <iframe 
+            src="https://cadamanha.substack.com/embed"
+            style={{
+              border: "0",
+              width: "100%",
+              height: "320px"
+            }}
+            frameBorder="0"
+            scrolling="no"
+          />
+          <ul className="max-w-8xl mx-auto p-6 flex flex-row flex-wrap justify-start items-center gap-4 border-b">
             <li>
-              <a className="text-sm text-muted-foreground" href="/sobre" title="Sobre">Sobre</a>
+              <Link className="text-sm text-muted-foreground" href="/blog" title="Blog">Blog</Link>
             </li>
             <li>
-              <a className="text-sm text-muted-foreground" href="/termos-uso" title="Termos de Uso">Termos de Uso</a>
+              <Link className="text-sm text-muted-foreground" href="/sobre" title="Sobre">Sobre</Link>
             </li>
             <li>
-              <a className="text-sm text-muted-foreground" href="/politica-de-privacidade" title="Política de Privacidade">Política de Privacidade</a>
+              <Link className="text-sm text-muted-foreground" href="/termos-uso" title="Termos de Uso">Termos de Uso</Link>
+            </li>
+            <li>
+              <Link className="text-sm text-muted-foreground" href="/politica-de-privacidade" title="Política de Privacidade">Política de Privacidade</Link>
+            </li>
+
+            <li className="md:ml-auto">
+              <Link className="text-sm text-muted-foreground" href="/feed.rss" title="Feed">feed.rss</Link>
             </li>
           </ul>
           <div className="max-w-8xl mx-auto p-6 flex flex-col md:flex-row md:justify-between items-start gap-2">
