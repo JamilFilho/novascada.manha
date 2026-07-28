@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
           permanent: true
         },
         {
+          source: '/amazon',
+          destination: 'https://link.amazon/B0dy0bMx3',
+          permanent: true
+        },
+        {
           source: '/devocionais/links',
           destination: '/links',
           permanent: true,
