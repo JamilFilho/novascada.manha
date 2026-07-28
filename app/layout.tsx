@@ -57,6 +57,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const topics = await getAllTopics();
+  const visibleTopics = topics.slice(0, 40);
 
   return (
     <html
@@ -72,13 +73,13 @@ export default async function RootLayout({
         </main>
 
         <footer className="border-t border-ring/20">
-          {topics.length > 0 && (
+          {visibleTopics.length > 0 && (
             <div className="max-w-8xl mx-auto p-6 border-b">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                 Temas
               </h2>
-              <ul className="flex flex-row flex-wrap gap-2">
-                {topics.map((topic) => (
+              <ul className="flex flex-row flex-wrap gap-2 mt-6">
+                {visibleTopics.map((topic) => (
                   <li key={topic.slug}>
                     <Link
                       className="text-sm text-muted-foreground hover:text-foreground"
@@ -91,6 +92,11 @@ export default async function RootLayout({
                     </Link>
                   </li>
                 ))}
+                <li className="w-full mt-6 text-right">
+                  <Link href="/temas" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Todos os temas →
+                  </Link>
+                </li>
               </ul>
             </div>
           )}
