@@ -66,7 +66,7 @@ export default async function HomePage() {
               ]}
             />
           )}
-          <h1 className="text-3xl font-bold tracking-tight mt-2 mb-4">{featuredPost.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight mt-12 mb-4">{featuredPost.title}</h1>
           <h2 className="text-lg text-muted-foreground mb-4">
             {featuredPost.description}
           </h2>
