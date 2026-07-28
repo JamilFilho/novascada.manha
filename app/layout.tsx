@@ -111,6 +111,9 @@ export default async function RootLayout({
           />
           <ul className="max-w-8xl mx-auto p-6 flex flex-row flex-wrap justify-start items-center gap-4 border-b">
             <li>
+              <Link className="text-sm text-muted-foreground" href="/apoie" title="Apoie">Apoie</Link>
+            </li>
+            <li>
               <Link className="text-sm text-muted-foreground" href="/blog" title="Blog">Blog</Link>
             </li>
             <li>
