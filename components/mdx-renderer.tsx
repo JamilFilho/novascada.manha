@@ -40,7 +40,7 @@ const components = {
   li: ({ ...props }) => <li className="pl-1" {...props} />,
   strong: ({ ...props }) => <strong className="font-semibold text-foreground" {...props} />,
   blockquote: ({ ...props }) => (
-    <blockquote className="my-10 py-10 text-center border-y text-muted-foreground" {...props} />
+    <blockquote className="my-10 py-4 pl-8 pr-4 border-l-4 border-primary text-muted-foreground" {...props} />
   ),
   hr: () => (<Separator className="my-10"/>),
   table: ({ children, ...props }: any) => (
