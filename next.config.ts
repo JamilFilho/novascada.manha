@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
     async redirects() {
         return [
           {
+            source: '/tempo-ordinario/:path*',
+            destination: '/devocionais/:path*',
+            permanent: true
+          },
+          {
             source: '/devocionais/links',
             destination: '/links',
             permanent: true,
