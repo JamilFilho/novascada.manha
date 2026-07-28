@@ -1,14 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPaginatedTopics } from "@/lib/content";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { getAllTopics } from "@/lib/content";
 import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 export const metadata: Metadata = {
@@ -30,23 +22,15 @@ export const metadata: Metadata = {
   },
 };
 
-interface TopicsPageProps {
-  searchParams: Promise<{ page?: string }>;
-}
-
-export default async function TopicsPage({ searchParams }: TopicsPageProps) {
-  const { page } = await searchParams;
-  const currentPage = Number(page) || 1;
-  const topicsPerPage = 20;
-
-  const { topics, totalPages } = await getPaginatedTopics(currentPage, topicsPerPage);
+export default async function TopicsPage() {
+  const topics = await getAllTopics();
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Todos os Temas",
     description: "Explore nossos devocionais por tema.",
-    url: `/temas${currentPage > 1 ? `?page=${currentPage}` : ""}`,
+    url: "/temas",
     mainEntity: {
       "@type": "ItemList",
       itemListElement: topics.map((t, index) => ({
@@ -88,37 +72,6 @@ export default async function TopicsPage({ searchParams }: TopicsPageProps) {
           </Link>
         ))}
       </div>
-
-      {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={currentPage > 1 ? `/temas?page=${currentPage - 1}` : "#"}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  href={`/temas?page=${i + 1}`}
-                  isActive={currentPage === i + 1}
-                >
-                  {i + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            <PaginationItem>
-              <PaginationNext
-                href={currentPage < totalPages ? `/temas?page=${currentPage + 1}` : "#"}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
     </div>
   );
 }
