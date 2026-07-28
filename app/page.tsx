@@ -4,6 +4,7 @@ import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
 import { Badge } from "@/components/ui/badge";
+import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 export default async function HomePage() {
   const posts = await getLatestPosts(3);
@@ -55,9 +56,16 @@ export default async function HomePage() {
 
       <article className="prose max-w-none">
         <header className="mb-8">
-          <Link href={`/series/${featuredPost.section.slug}`} title={`Série ${featuredPost.section.title}`}>
-            <Badge className="mb-4" variant="default">{featuredPost.section.title}</Badge>
-          </Link>
+          {featuredPost.section && (
+            <AppBreadcrumb
+              items={[
+                { label: "Início", href: "/" },
+                { label: "Devocionais", href: "/devocionais" },
+                { label: featuredPost.section.title, href: `/series/${featuredPost.section.slug}` },
+                { label: featuredPost.title }
+              ]}
+            />
+          )}
           <h1 className="text-3xl font-bold tracking-tight mt-2 mb-4">{featuredPost.title}</h1>
           <h2 className="text-lg text-muted-foreground mb-4">
             {featuredPost.description}
