@@ -6,6 +6,7 @@ import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
 import { Badge } from "@/components/ui/badge"
+import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 interface PostPageProps {
   params: Promise<{ slug: string }>;
@@ -96,10 +97,18 @@ export default async function PostPage({ params }: PostPageProps) {
       />
 
       <article className="relative prose max-w-none">
-        <header className="mb-20">
-          <Link href={`/series/${post.section.slug}`} title={`Série ${post.section.title}`}>
-            <Badge className="mb-4" variant="default">{post.section.title}</Badge>
-          </Link>
+        {post.section && (
+          <AppBreadcrumb
+            items={[
+              { label: "Início", href: "/" },
+              { label: "Devocionais", href: "/devocionais" },
+              { label: post.section.title, href: `/series/${post.section.slug}` },
+              { label: post.title }
+            ]}
+          />
+        )}
+        
+        <header className="mt-12 mb-20">
           <h1 className="text-3xl font-bold tracking-tight mt-2 mb-2">{post.title}</h1>
           <h2 className="text-lg text-muted-foreground mb-4">{post.description}</h2>
 

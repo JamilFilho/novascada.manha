@@ -1,5 +1,11 @@
 import { MetadataRoute } from "next";
-import { getAllPosts, getAllSeries } from "@/lib/content";
+import {
+  getAllPosts,
+  getAllSeries,
+  getAllBooks,
+  getChaptersByBook,
+  getVersesByBookChapter,
+} from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://novasdecadamanha.com.br";
@@ -9,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/devocionais",
     "/series",
+    "/biblia",
     "/links",
     "/sobre",
     "/politica-de-privacidade",
@@ -37,5 +44,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...routes, ...postRoutes, ...seriesRoutes];
+  // 4. Páginas dinâmicas da Bíblia (livro, capítulo e versículo)
+  const books = await getAllBooks();
+  const bookRoutes: MetadataRoute.Sitemap = [];
+  const chapterRoutes: MetadataRoute.Sitemap = [];
+  const verseRoutes: MetadataRoute.Sitemap = [];
+
+  for (const book of books) {
+    bookRoutes.push({
+      url: `${baseUrl}/biblia/${book.slug}`,
+      lastModified: new Date().toISOString().split("T")[0],
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    });
+
+    const chapters = await getChaptersByBook(book.slug);
+    for (const chapter of chapters) {
+      chapterRoutes.push({
+        url: `${baseUrl}/biblia/${book.slug}/${chapter}`,
+        lastModified: new Date().toISOString().split("T")[0],
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      });
+
+      const verses = await getVersesByBookChapter(book.slug, chapter);
+      for (const verse of verses) {
+        verseRoutes.push({
+          url: `${baseUrl}/biblia/${book.slug}/${chapter}/${verse}`,
+          lastModified: new Date().toISOString().split("T")[0],
+          changeFrequency: "monthly" as const,
+          priority: 0.5,
+        });
+      }
+    }
+  }
+
+  return [
+    ...routes,
+    ...postRoutes,
+    ...seriesRoutes,
+    ...bookRoutes,
+    ...chapterRoutes,
+    ...verseRoutes,
+  ];
 }

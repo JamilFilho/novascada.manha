@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPaginatedSeries } from "@/lib/content";
+import { getPaginatedBooks } from "@/lib/content";
 import {
   Pagination,
   PaginationContent,
@@ -12,49 +12,48 @@ import {
 import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 export const metadata: Metadata = {
-  title: "Todas as Séries Temáticas",
-  description: "Explore nossas séries temáticas de devocionais e medite na Palavra de Deus por temas.",
+  title: "Devocionais Bíblicos",
+  description: "Explore devocionais organizados por livro da Bíblia e medite na Palavra de Deus.",
   alternates: {
-    canonical: "/series",
+    canonical: "/biblia",
   },
   openGraph: {
-    title: "Todas as Séries Temáticas",
-    description: "Explore nossas séries temáticas de devocionais e medite na Palavra de Deus por temas.",
-    url: "/series",
+    title: "Devocionais Bíblicos",
+    description: "Explore devocionais organizados por livro da Bíblia e medite na Palavra de Deus.",
+    url: "/biblia",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Todas as Séries Temáticas",
-    description: "Explore nossas séries temáticas de devocionais e medite na Palavra de Deus por temas.",
+    title: "Devocionais Bíblicos",
+    description: "Explore devocionais organizados por livro da Bíblia e medite na Palavra de Deus.",
   },
 };
 
-interface SeriesPageProps {
+interface BibliaPageProps {
   searchParams: Promise<{ page?: string }>;
 }
 
-export default async function SeriesPage({ searchParams }: SeriesPageProps) {
+export default async function BibliaPage({ searchParams }: BibliaPageProps) {
   const { page } = await searchParams;
   const currentPage = Number(page) || 1;
-  const seriesPerPage = 10;
+  const booksPerPage = 10;
 
-  const { series, totalPages } = await getPaginatedSeries(currentPage, seriesPerPage);
+  const { books, totalPages } = await getPaginatedBooks(currentPage, booksPerPage);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Todas as Séries Temáticas",
-    description: "Explore nossas séries temáticas de devocionais e medite na Palavra de Deus por temas.",
-    url: `/series${currentPage > 1 ? `?page=${currentPage}` : ""}`,
+    name: "Devocionais Bíblicos",
+    description: "Explore devocionais organizados por livro da Bíblia e medite na Palavra de Deus.",
+    url: `/biblia${currentPage > 1 ? `?page=${currentPage}` : ""}`,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: series.map((s, index) => ({
+      itemListElement: books.map((book, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `/series/${s.slug}`,
-        name: s.title,
-        description: s.description,
+        url: `/biblia/${book.slug}`,
+        name: book.name,
       })),
     },
   };
@@ -69,25 +68,22 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
       <AppBreadcrumb
         items={[
           { label: "Início", href: "/" },
-          { label: "Séries"}
+          { label: "Bíblia" },
         ]}
       />
 
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Todas as séries Temáticas</h1>
-        <p className="text-sm text-muted-foreground">Explore nossas séries temáticas de devocionais</p>
+        <h1 className="text-2xl font-bold tracking-tight">Devocionais Bíblicos</h1>
+        <p className="text-sm text-muted-foreground">Medite em nossos devocionais bíblicos navegando pelos livros da Bíblia Sagrada.</p>
       </header>
 
       <div className="divide-y border-t border-b">
-        {series.map((s) => (
-          <article key={s.slug} className="py-6 flex flex-col gap-2">
-            <Link href={`/series/${s.slug}`}>
-              <h3 className="font-bold hover:underline text-lg">{s.title}</h3>
-              {s.description && (
-                <p className="text-muted-foreground">{s.description}</p>
-              )}
+        {books.map((book) => (
+          <article key={book.slug} className="py-6 flex flex-col gap-2">
+            <Link href={`/biblia/${book.slug}`}>
+              <h3 className="font-bold hover:underline text-lg">{book.name}</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {s.postCount} {s.postCount === 1 ? "edição" : "edições"}
+                {book.postCount} {book.postCount === 1 ? "devocional" : "devocionais"}
               </p>
             </Link>
           </article>
@@ -99,7 +95,7 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={currentPage > 1 ? `/series?page=${currentPage - 1}` : "#"}
+                href={currentPage > 1 ? `/biblia?page=${currentPage - 1}` : "#"}
                 className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -107,7 +103,7 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
             {Array.from({ length: totalPages }).map((_, i) => (
               <PaginationItem key={i}>
                 <PaginationLink
-                  href={`/series?page=${i + 1}`}
+                  href={`/biblia?page=${i + 1}`}
                   isActive={currentPage === i + 1}
                 >
                   {i + 1}
@@ -117,7 +113,7 @@ export default async function SeriesPage({ searchParams }: SeriesPageProps) {
 
             <PaginationItem>
               <PaginationNext
-                href={currentPage < totalPages ? `/series?page=${currentPage + 1}` : "#"}
+                href={currentPage < totalPages ? `/biblia?page=${currentPage + 1}` : "#"}
                 className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>

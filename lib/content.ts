@@ -7,6 +7,12 @@ const DEVOTIONAL_PATH = path.join(process.cwd(), "content/devocionais");
 const BLOG_PATH = path.join(process.cwd(), "content/blog");
 const PAGES_PATH = path.join(process.cwd(), "content/pages");
 
+export interface PostReference {
+  book: string;
+  chapter: string;
+  verse: string;
+}
+
 export interface PostSection {
   id: string;
   title: string;
@@ -20,6 +26,8 @@ export interface Post {
   date: string;
   substack: string;
   content: string;
+  section?: PostSection;
+  reference?: PostReference;
   [key: string]: any;
 }
 
@@ -100,6 +108,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
       substack: data.substack || "",
       section: data.section as PostSection | undefined,
+      reference: data.reference as PostReference | undefined,
       content,
       ...data,
     };
@@ -329,5 +338,151 @@ export async function getPaginatedSeries(page: number, limit: number) {
     series: allSeries.slice(startIndex, endIndex),
     totalPages: Math.ceil(allSeries.length / limit),
     total: allSeries.length,
+  };
+}
+
+// ----------------------------------------------------------------
+// Funções Auxiliares para a Bíblia (agrupadas pelo frontmatter "reference")
+// ----------------------------------------------------------------
+
+// Gera um slug de URL a partir de um nome de livro (remove acentos, espaços -> hífen)
+export function slugifyBookName(book: string): string {
+  return book
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+export interface BookInfo {
+  slug: string;
+  name: string;
+  postCount: number;
+}
+
+// Retorna todos os livros encontrados nos devocionais, com contagem
+export async function getAllBooks(): Promise<BookInfo[]> {
+  const allPosts = await getAllPosts();
+  const booksMap = new Map<string, BookInfo>();
+
+  for (const post of allPosts) {
+    const book = post.reference?.book;
+    if (!book) continue;
+
+    const slug = slugifyBookName(book);
+    const existing = booksMap.get(slug);
+    if (existing) {
+      existing.postCount += 1;
+    } else {
+      booksMap.set(slug, { slug, name: book, postCount: 1 });
+    }
+  }
+
+  return Array.from(booksMap.values());
+}
+
+// Busca o nome original do livro a partir do slug
+export async function getBookBySlug(bookSlug: string): Promise<BookInfo | null> {
+  const allBooks = await getAllBooks();
+  return allBooks.find((b) => b.slug === bookSlug) || null;
+}
+
+// Retorna todos os posts de um livro
+export async function getPostsByBook(bookSlug: string): Promise<Post[]> {
+  const allPosts = await getAllPosts();
+  return allPosts.filter(
+    (post) => post.reference?.book && slugifyBookName(post.reference.book) === bookSlug
+  );
+}
+
+export async function getPaginatedPostsByBook(bookSlug: string, page: number, limit: number) {
+  const posts = await getPostsByBook(bookSlug);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    posts: posts.slice(startIndex, endIndex),
+    totalPages: Math.ceil(posts.length / limit),
+    total: posts.length,
+  };
+}
+
+// Retorna todos os posts de um livro + capítulo
+export async function getPostsByBookChapter(bookSlug: string, chapter: string): Promise<Post[]> {
+  const bookPosts = await getPostsByBook(bookSlug);
+  return bookPosts.filter((post) => post.reference?.chapter === chapter);
+}
+
+export async function getPaginatedPostsByBookChapter(
+  bookSlug: string,
+  chapter: string,
+  page: number,
+  limit: number
+) {
+  const posts = await getPostsByBookChapter(bookSlug, chapter);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    posts: posts.slice(startIndex, endIndex),
+    totalPages: Math.ceil(posts.length / limit),
+    total: posts.length,
+  };
+}
+
+// Retorna todos os posts de um livro + capítulo + versículo
+export async function getPostsByBookChapterVerse(
+  bookSlug: string,
+  chapter: string,
+  verse: string
+): Promise<Post[]> {
+  const chapterPosts = await getPostsByBookChapter(bookSlug, chapter);
+  return chapterPosts.filter((post) => post.reference?.verse === verse);
+}
+
+export async function getPaginatedPostsByBookChapterVerse(
+  bookSlug: string,
+  chapter: string,
+  verse: string,
+  page: number,
+  limit: number
+) {
+  const posts = await getPostsByBookChapterVerse(bookSlug, chapter, verse);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    posts: posts.slice(startIndex, endIndex),
+    totalPages: Math.ceil(posts.length / limit),
+    total: posts.length,
+  };
+}
+
+// Retorna todos os capítulos únicos de um livro (para generateStaticParams)
+export async function getChaptersByBook(bookSlug: string): Promise<string[]> {
+  const posts = await getPostsByBook(bookSlug);
+  const chapters = new Set(posts.map((p) => p.reference?.chapter).filter(Boolean) as string[]);
+  return Array.from(chapters).sort((a, b) => Number(a) - Number(b));
+}
+
+// Retorna todos os versículos únicos de um livro + capítulo (para generateStaticParams)
+export async function getVersesByBookChapter(bookSlug: string, chapter: string): Promise<string[]> {
+  const posts = await getPostsByBookChapter(bookSlug, chapter);
+  const verses = new Set(posts.map((p) => p.reference?.verse).filter(Boolean) as string[]);
+  return Array.from(verses).sort((a, b) => Number(a) - Number(b));
+}
+
+// Paginação do índice de livros (/biblia)
+export async function getPaginatedBooks(page: number, limit: number) {
+  const allBooks = await getAllBooks();
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    books: allBooks.slice(startIndex, endIndex),
+    totalPages: Math.ceil(allBooks.length / limit),
+    total: allBooks.length,
   };
 }

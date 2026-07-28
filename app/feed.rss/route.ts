@@ -10,9 +10,13 @@ export async function GET() {
     .map((post) => {
       const postDate = new Date(`${post.date.split("T")[0]}T12:00:00`);
       const author = post.author || "Equipe Novas de Cada Manhã";
-      const category = post.section?.title
-        ? `<category><![CDATA[${post.section.title}]]></category>`
-        : "";
+
+      const categories = [
+        post.section?.title ? `<category><![CDATA[${post.section.title}]]></category>` : "",
+        post.reference?.book ? `<category><![CDATA[${post.reference.book}]]></category>` : "",
+      ]
+        .filter(Boolean)
+        .join("\n      ");
 
       return `<item>
       <title><![CDATA[${post.title}]]></title>
@@ -21,7 +25,7 @@ export async function GET() {
       <pubDate>${postDate.toUTCString()}</pubDate>
       <dc:creator><![CDATA[${author}]]></dc:creator>
       <description><![CDATA[${post.description || ""}]]></description>
-      ${category}
+      ${categories}
       <content:encoded><![CDATA[${post.content}]]></content:encoded>
     </item>`;
     })

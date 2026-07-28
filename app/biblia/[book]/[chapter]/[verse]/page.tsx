@@ -1,7 +1,13 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getSeriesBySlug, getPaginatedPostsBySeries, getAllSeries } from "@/lib/content";
+import {
+  getBookBySlug,
+  getChaptersByBook,
+  getVersesByBookChapter,
+  getPaginatedPostsByBookChapterVerse,
+  getAllBooks,
+} from "@/lib/content";
 import {
   Pagination,
   PaginationContent,
@@ -12,37 +18,49 @@ import {
 } from "@/components/ui/pagination";
 import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
-interface SeriePageProps {
-  params: Promise<{ serie: string }>;
+interface VersePageProps {
+  params: Promise<{ book: string; chapter: string; verse: string }>;
   searchParams: Promise<{ page?: string }>;
 }
 
 export async function generateStaticParams() {
-  const allSeries = await getAllSeries();
-  return allSeries.map((series) => ({ serie: series.slug }));
-}
+  const books = await getAllBooks();
+  const params: { book: string; chapter: string; verse: string }[] = [];
 
-export async function generateMetadata({ params }: SeriePageProps): Promise<Metadata> {
-  const { serie } = await params;
-  const series = await getSeriesBySlug(serie);
-
-  if (!series) {
-    return { title: "Série não encontrada" };
+  for (const b of books) {
+    const chapters = await getChaptersByBook(b.slug);
+    for (const chapter of chapters) {
+      const verses = await getVersesByBookChapter(b.slug, chapter);
+      for (const verse of verses) {
+        params.push({ book: b.slug, chapter, verse });
+      }
+    }
   }
 
-  const title = series.title;
-  const description = series.description || `Devocionais da série ${series.title}.`;
+  return params;
+}
+
+export async function generateMetadata({ params }: VersePageProps): Promise<Metadata> {
+  const { book, chapter, verse } = await params;
+  const bookInfo = await getBookBySlug(book);
+
+  if (!bookInfo) {
+    return { title: "Livro não encontrado" };
+  }
+
+  const title = `Devocionais em ${bookInfo.name} ${chapter}:${verse}`;
+  const description = `Todos os devocionais que meditam em ${bookInfo.name} ${chapter}:${verse}.`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: `/series/${series.slug}`,
+      canonical: `/biblia/${bookInfo.slug}/${chapter}/${verse}`,
     },
     openGraph: {
       title,
       description,
-      url: `/series/${series.slug}`,
+      url: `/biblia/${bookInfo.slug}/${chapter}/${verse}`,
       type: "website",
     },
     twitter: {
@@ -53,25 +71,35 @@ export async function generateMetadata({ params }: SeriePageProps): Promise<Meta
   };
 }
 
-export default async function SeriePage({ params, searchParams }: SeriePageProps) {
-  const { serie } = await params;
+export default async function VersePage({ params, searchParams }: VersePageProps) {
+  const { book, chapter, verse } = await params;
   const { page } = await searchParams;
   const currentPage = Number(page) || 1;
   const postsPerPage = 10;
 
-  const series = await getSeriesBySlug(serie);
-  if (!series) {
+  const bookInfo = await getBookBySlug(book);
+  if (!bookInfo) {
     notFound();
   }
 
-  const { posts, totalPages } = await getPaginatedPostsBySeries(serie, currentPage, postsPerPage);
+  const { posts, totalPages, total } = await getPaginatedPostsByBookChapterVerse(
+    book,
+    chapter,
+    verse,
+    currentPage,
+    postsPerPage
+  );
+
+  if (total === 0) {
+    notFound();
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: series.title,
-    description: series.description,
-    url: `/series/${series.slug}${currentPage > 1 ? `?page=${currentPage}` : ""}`,
+    name: `Devocionais em ${bookInfo.name} ${chapter}:${verse}`,
+    description: `Todos os devocionais que meditam em ${bookInfo.name} ${chapter}:${verse}.`,
+    url: `/biblia/${bookInfo.slug}/${chapter}/${verse}${currentPage > 1 ? `?page=${currentPage}` : ""}`,
     mainEntity: {
       "@type": "ItemList",
       itemListElement: posts.map((post, index) => ({
@@ -94,16 +122,26 @@ export default async function SeriePage({ params, searchParams }: SeriePageProps
       <AppBreadcrumb
         items={[
           { label: "Início", href: "/" },
-          { label: "Séries", href: "/series" },
-          { label: series.title },
+          { label: "Bíblia", href: "/biblia" },
+          { label: bookInfo.name, href: `/biblia/${bookInfo.slug}` },
+          { label: chapter, href: `/biblia/${bookInfo.slug}/${chapter}` },
+          { label: verse },
         ]}
       />
 
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">[Série] {series.title}</h1>
-        {series.description && (
-          <p className="text-sm text-muted-foreground">{series.description}</p>
-        )}
+        <Link
+          href={`/biblia/${bookInfo.slug}/${chapter}`}
+          className="text-sm text-muted-foreground hover:underline"
+        >
+          {bookInfo.name} {chapter}
+        </Link>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {bookInfo.name} {chapter}:{verse}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {total} {total === 1 ? "devocional" : "devocionais"}
+        </p>
       </header>
 
       <div className="divide-y border-t border-b">
@@ -127,7 +165,11 @@ export default async function SeriePage({ params, searchParams }: SeriePageProps
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={currentPage > 1 ? `/series/${series.slug}?page=${currentPage - 1}` : "#"}
+                href={
+                  currentPage > 1
+                    ? `/biblia/${bookInfo.slug}/${chapter}/${verse}?page=${currentPage - 1}`
+                    : "#"
+                }
                 className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
@@ -135,7 +177,7 @@ export default async function SeriePage({ params, searchParams }: SeriePageProps
             {Array.from({ length: totalPages }).map((_, i) => (
               <PaginationItem key={i}>
                 <PaginationLink
-                  href={`/series/${series.slug}?page=${i + 1}`}
+                  href={`/biblia/${bookInfo.slug}/${chapter}/${verse}?page=${i + 1}`}
                   isActive={currentPage === i + 1}
                 >
                   {i + 1}
@@ -145,7 +187,11 @@ export default async function SeriePage({ params, searchParams }: SeriePageProps
 
             <PaginationItem>
               <PaginationNext
-                href={currentPage < totalPages ? `/series/${series.slug}?page=${currentPage + 1}` : "#"}
+                href={
+                  currentPage < totalPages
+                    ? `/biblia/${bookInfo.slug}/${chapter}/${verse}?page=${currentPage + 1}`
+                    : "#"
+                }
                 className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>

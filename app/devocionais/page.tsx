@@ -11,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 export const metadata: Metadata = {
   title: "Todos os Devocionais",
@@ -62,17 +63,24 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
   };
 
   return (
-    <div className="space-y-12">
+    <section className="space-y-12">
       {/* Injeção de dados estruturados para listagem */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="space-y-2">
+      <AppBreadcrumb
+        items={[
+          { label: "Início", href: "/" },
+          { label: "Devocionais", href: "/devocionais" }
+        ]}
+      />
+
+      <header className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight">Todos os devocionais</h1>
         <p className="text-sm text-muted-foreground">Edifique sua fé com nossos devocionais diários</p>
-      </div>
+      </header>
 
       <div className="divide-y border-t border-b">
         {posts.map((post) => (
@@ -120,6 +128,6 @@ export default async function EdicoesPage({ searchParams }: EdicoesPageProps) {
           </PaginationContent>
         </Pagination>
       )}
-    </div>
+    </section>
   );
 }
