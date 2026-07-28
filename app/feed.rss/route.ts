@@ -11,9 +11,12 @@ export async function GET() {
       const postDate = new Date(`${post.date.split("T")[0]}T12:00:00`);
       const author = post.author || "Equipe Novas de Cada Manhã";
 
+      const topics = (post.topics as string[] | undefined) || [];
+
       const categories = [
         post.section?.title ? `<category><![CDATA[${post.section.title}]]></category>` : "",
         post.reference?.book ? `<category><![CDATA[${post.reference.book}]]></category>` : "",
+        ...topics.map((topic) => `<category><![CDATA[${topic}]]></category>`),
       ]
         .filter(Boolean)
         .join("\n      ");

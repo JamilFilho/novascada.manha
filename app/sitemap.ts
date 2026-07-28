@@ -5,6 +5,7 @@ import {
   getAllBooks,
   getChaptersByBook,
   getVersesByBookChapter,
+  getAllTopics,
 } from "@/lib/content";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -16,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/devocionais",
     "/series",
     "/biblia",
+    "/temas",
     "/links",
     "/sobre",
     "/politica-de-privacidade",
@@ -44,7 +46,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // 4. Páginas dinâmicas da Bíblia (livro, capítulo e versículo)
+  // 4. Páginas dinâmicas dos temas
+  const topics = await getAllTopics();
+  const topicRoutes = topics.map((t) => ({
+    url: `${baseUrl}/temas/${t.slug}`,
+    lastModified: new Date().toISOString().split("T")[0],
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  // 5. Páginas dinâmicas da Bíblia (livro, capítulo e versículo)
   const books = await getAllBooks();
   const bookRoutes: MetadataRoute.Sitemap = [];
   const chapterRoutes: MetadataRoute.Sitemap = [];
@@ -83,6 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...routes,
     ...postRoutes,
     ...seriesRoutes,
+    ...topicRoutes,
     ...bookRoutes,
     ...chapterRoutes,
     ...verseRoutes,

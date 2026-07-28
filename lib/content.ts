@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { slugify } from "@/lib/slugify";
 
 // Caminhos base para as pastas de conteúdo
 const DEVOTIONAL_PATH = path.join(process.cwd(), "content/devocionais");
@@ -201,6 +202,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
       title: data.title || "Artigo sem título",
       date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
       substack: data.substack || "",
+      topics: data.topics,
       content,
       ...data,
     };
@@ -347,13 +349,7 @@ export async function getPaginatedSeries(page: number, limit: number) {
 
 // Gera um slug de URL a partir de um nome de livro (remove acentos, espaços -> hífen)
 export function slugifyBookName(book: string): string {
-  return book
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // remove acentos
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "");
+  return slugify(book);
 }
 
 export interface BookInfo {
@@ -371,7 +367,7 @@ export async function getAllBooks(): Promise<BookInfo[]> {
     const book = post.reference?.book;
     if (!book) continue;
 
-    const slug = slugifyBookName(book);
+    const slug = slugify(book);
     const existing = booksMap.get(slug);
     if (existing) {
       existing.postCount += 1;
@@ -393,7 +389,7 @@ export async function getBookBySlug(bookSlug: string): Promise<BookInfo | null> 
 export async function getPostsByBook(bookSlug: string): Promise<Post[]> {
   const allPosts = await getAllPosts();
   return allPosts.filter(
-    (post) => post.reference?.book && slugifyBookName(post.reference.book) === bookSlug
+    (post) => post.reference?.book && slugify(post.reference.book) === bookSlug
   );
 }
 
@@ -484,5 +480,75 @@ export async function getPaginatedBooks(page: number, limit: number) {
     books: allBooks.slice(startIndex, endIndex),
     totalPages: Math.ceil(allBooks.length / limit),
     total: allBooks.length,
+  };
+}
+
+export interface TopicInfo {
+  slug: string;
+  name: string;
+  postCount: number;
+}
+
+// Retorna todos os temas encontrados nos devocionais, com contagem
+export async function getAllTopics(): Promise<TopicInfo[]> {
+  const allPosts = await getAllPosts();
+  const topicsMap = new Map<string, TopicInfo>();
+
+  for (const post of allPosts) {
+    const topics = post.topics as string[] | undefined;
+    if (!topics) continue;
+
+    for (const topic of topics) {
+      const slug = slugify(topic);
+      const existing = topicsMap.get(slug);
+      if (existing) {
+        existing.postCount += 1;
+      } else {
+        topicsMap.set(slug, { slug, name: topic, postCount: 1 });
+      }
+    }
+  }
+
+  return Array.from(topicsMap.values()).sort((a, b) => b.postCount - a.postCount);
+}
+
+// Busca o nome original do tema a partir do slug
+export async function getTopicBySlug(topicSlug: string): Promise<TopicInfo | null> {
+  const allTopics = await getAllTopics();
+  return allTopics.find((t) => t.slug === topicSlug) || null;
+}
+
+// Retorna todos os posts de um tema
+export async function getPostsByTopic(topicSlug: string): Promise<Post[]> {
+  const allPosts = await getAllPosts();
+  return allPosts.filter((post) => {
+    const topics = post.topics as string[] | undefined;
+    return topics?.some((topic) => slugify(topic) === topicSlug);
+  });
+}
+
+// Paginação dos devocionais de um tema (/temas/[theme])
+export async function getPaginatedPostsByTopic(topicSlug: string, page: number, limit: number) {
+  const topicPosts = await getPostsByTopic(topicSlug);
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    posts: topicPosts.slice(startIndex, endIndex),
+    totalPages: Math.ceil(topicPosts.length / limit),
+    total: topicPosts.length,
+  };
+}
+
+// Paginação do índice de temas (/temas)
+export async function getPaginatedTopics(page: number, limit: number) {
+  const allTopics = await getAllTopics();
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  return {
+    topics: allTopics.slice(startIndex, endIndex),
+    totalPages: Math.ceil(allTopics.length / limit),
+    total: allTopics.length,
   };
 }

@@ -125,6 +125,7 @@ export default async function PostPage({ params }: PostPageProps) {
           description={post.description}
           slug={post.slug}
           substackUrl={post.substack}
+          topics={post.topics}
         />
       </article>
 
