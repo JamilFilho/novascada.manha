@@ -5,6 +5,8 @@ import { Geist_Mono, Roboto, Merriweather } from "next/font/google";
 import "./globals.css"
 import { cn } from "@/lib/utils";
 import SiteNav from "@/components/site-nav";
+import { getAllTopics } from "@/lib/content";
+import { Badge } from "@/components/ui/badge";
 
 const merriweatherHeading = Merriweather({subsets:['latin'],variable:'--font-heading'});
 const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
@@ -37,7 +39,6 @@ export const metadata: Metadata = {
     siteName: defaultTitle,
     locale: "pt_BR",
     type: "website",
-    // images: [{ url: "/og-image.png", width: 1200, height: 630 }] // Adicione quando tiver uma imagem padrão
   },
   twitter: {
     card: "summary_large_image",
@@ -50,11 +51,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const topics = await getAllTopics();
+
   return (
     <html
       lang="pt-br"
@@ -69,6 +72,29 @@ export default function RootLayout({
         </main>
 
         <footer className="border-t border-ring/20">
+          {topics.length > 0 && (
+            <div className="max-w-8xl mx-auto p-6 border-b">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                Temas
+              </h2>
+              <ul className="flex flex-row flex-wrap gap-2">
+                {topics.map((topic) => (
+                  <li key={topic.slug}>
+                    <Link
+                      className="text-sm text-muted-foreground hover:text-foreground"
+                      href={`/temas/${topic.slug}`}
+                      title={topic.name}
+                    >
+                      <Badge variant="secondary">
+                        {topic.name}
+                      </Badge>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <iframe 
             src="https://cadamanha.substack.com/embed"
             style={{
@@ -76,8 +102,6 @@ export default function RootLayout({
               width: "100%",
               height: "320px"
             }}
-            frameBorder="0"
-            scrolling="no"
           />
           <ul className="max-w-8xl mx-auto p-6 flex flex-row flex-wrap justify-start items-center gap-4 border-b">
             <li>
