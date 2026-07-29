@@ -4,6 +4,76 @@ const nextConfig: NextConfig = {
     async redirects() {
       return [
         {
+          source: '/dietrich-bonhoeffer-discipulado',
+          destination: 'https://link.amazon/B0eVpMVUS',
+          permanent: true
+        },
+        {
+          source: '/ferguson-o-sermao-do-monte',
+          destination: 'https://link.amazon/B05NAcvcx',
+          permanent: true
+        },
+        {
+          source: '/sermao-do-monte',
+          destination: '/series/sermao-do-monte',
+          permanent: true
+        },
+        {
+          source: '/tentacao',
+          destination: '/temas/tentacao',
+          permanent: true
+        },
+        {
+          source: '/vinganca',
+          destination: '/temas/vinganca',
+          permanent: true
+        },
+        {
+          source: '/vida-eterna',
+          destination: '/temas/vida-eterna',
+          permanent: true
+        },
+        {
+          source: '/verdade',
+          destination: '/temas/verdade',
+          permanent: true
+        },
+        {
+          source: '/wallpapers',
+          destination: '/',
+          permanent: true
+        },
+        {
+          source: '/wallpapers/:path*',
+          destination: '/',
+          permanent: true
+        },
+        {
+          source: '/choro',
+          destination: '/temas/choro',
+          permanent:true
+        },
+        {
+          source: '/cdn-cgi/:path*',
+          destination: '/',
+          permanent: true
+        },
+        {
+          source: '/assim-cremos',
+          destination: '/devocionais/assim-cremos',
+          permanent:true
+        },
+        {
+          source: '/assets/:path*',
+          destination:'/',
+          permanent: true
+        },
+        {
+          source: '/apocalipse',
+          destination: '/temas/apocalipse',
+          permanent: true
+        },
+        {
           source: '/tags/:path*',
           destination: '/temas/:path*',
           permanent: true
@@ -14,12 +84,57 @@ const nextConfig: NextConfig = {
           permanent: true
         },
         {
+          source: '/a-obediencia-remove-a-vergonha',
+          destination: '/devocionais/22-07-2026-nao-permitas-que-zombem',
+          permanent: true
+        },
+        {
+          source: '/a-palavra-de-deus-e-pura/',
+          destination: '/devocionais/a-palavra-de-deus-e-pura/',
+          permanent: true
+        },
+        {
+          source: '/a-bussola',
+          destination: '/devocionais/29-07-2026-afasta-de-mim',
+          permanent: true
+        },
+        {
+          source: '/voces-orem-assim',
+          destination: '/devocionais/voces-orem-assim',
+          permanent: true
+        },
+        {
+          source: '/vida-crista',
+          destination: '/temas/vida-crista',
+          permanent: true
+        },
+        {
+          source: '/salmo-119/a-felicidade-plena',
+          destination: '/devocionais/2026-07-01-como-sao-felizes',
+          permanent: true
+        },
+        {
+          source: '/a-felicidade-plena',
+          destination: '/devocionais/2026-07-01-como-sao-felizes',
+          permanent: true
+        },
+        {
+          source: '/rss',
+          destination: '/feed.rss',
+          permanent: true
+        },
+        {
           source: '/tempo-ordinario/:path*',
           destination: '/devocionais/:path*',
           permanent: true
         },
         {
           source: '/versiculo-do-dia',
+          destination: 'https://t.me/versiculododia_oficial',
+          permanent: true
+        },
+        {
+          source: '/versiculo-do-dia/:path*',
           destination: 'https://t.me/versiculododia_oficial',
           permanent: true
         },
