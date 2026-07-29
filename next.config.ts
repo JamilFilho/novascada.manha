@@ -4,8 +4,23 @@ const nextConfig: NextConfig = {
     async redirects() {
       return [
         {
+          source: '/tags/:path*',
+          destination: '/temas/:path*',
+          permanent: true
+        },
+        {
+          source: '/tag/:path*',
+          destination: '/temas/:path*',
+          permanent: true
+        },
+        {
           source: '/tempo-ordinario/:path*',
           destination: '/devocionais/:path*',
+          permanent: true
+        },
+        {
+          source: '/versiculo-do-dia',
+          destination: 'https://t.me/versiculododia_oficial',
           permanent: true
         },
         {
