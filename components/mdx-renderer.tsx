@@ -3,6 +3,11 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import {
   Table,
   TableBody,
   TableCell,
@@ -89,6 +94,17 @@ const components = {
         </Item>
       </Link>
     </div>
+  ),
+  Alert: ({title, description}: {
+    title: string;
+    description: string;
+  }) => (
+    <Alert>
+      <AlertTitle>{title}</AlertTitle>
+      <AlertDescription>
+        {description}
+      </AlertDescription>
+    </Alert>
   ),
   Button: ({ link, text }: { 
     text: string;
