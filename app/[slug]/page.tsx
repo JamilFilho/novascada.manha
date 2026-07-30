@@ -75,7 +75,7 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <header className="mb-8">
+      <header className="mb-20 space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">{pageContent.title}</h1>
         <h2 className="text-lg text-muted-foreground">{pageContent.description}</h2>
       </header>
