@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import SiteNav from "@/components/site-nav";
 import { getAllTopics } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
+import { WhatsappLogoIcon } from "@phosphor-icons/react";
+import CTALinks from "@/components/cta-links";
 
 const merriweatherHeading = Merriweather({subsets:['latin'],variable:'--font-heading'});
 const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
@@ -73,6 +75,13 @@ export default async function RootLayout({
         </main>
 
         <footer className="border-t border-ring/20">
+          <ul className="max-w-8xl mx-auto p-6 flex flex-col md:flex-row flex-wrap justify-start items-center gap-4 md:gap-6 border-b bg-secondary/30">
+            <li>
+              Receba nossos devocionais no:
+            </li>
+            
+            <CTALinks />
+          </ul>
           {visibleTopics.length > 0 && (
             <div className="max-w-8xl mx-auto p-6 border-b">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
