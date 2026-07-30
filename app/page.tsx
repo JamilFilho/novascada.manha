@@ -23,7 +23,7 @@ export default async function HomePage() {
       {
         "@type": "WebSite",
         "@id": "https://novasdecadamanha.com.br/#website", // substitua pelo seu domínio se tiver
-        "name": "Devocionais",
+        "name": "Novas de Cada Manhã",
         "url": "/"
       },
       {
