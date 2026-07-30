@@ -44,7 +44,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Blog",
-    description: "Artigos, reflexões e outros textos do projeto.",
+    description: "Artigos, reflexões e outros textos do projeto Novas de Cada Manhã.",
     url: `/blog${currentPage > 1 ? `?page=${currentPage}` : ""}`,
     mainEntity: {
       "@type": "ItemList",

@@ -3,7 +3,6 @@ import { getLatestPosts } from "@/lib/content";
 import { MdxRenderer } from "@/components/mdx-renderer";
 import { calculateReadingTime } from "@/utils/reading-time";
 import PostFooter from "@/components/post-footer";
-import { Badge } from "@/components/ui/badge";
 import { AppBreadcrumb } from "@/components/app.breadcrumb";
 
 export default async function HomePage() {
@@ -23,7 +22,7 @@ export default async function HomePage() {
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://seudominio.com/#website", // substitua pelo seu domínio se tiver
+        "@id": "https://novasdecadamanha.com.br/#website", // substitua pelo seu domínio se tiver
         "name": "Devocionais",
         "url": "/"
       },
